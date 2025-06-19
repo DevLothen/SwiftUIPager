@@ -69,6 +69,13 @@ extension Pager.PagerContent: Buildable {
     func partialPagination(_ ratio: CGFloat) -> Self {
         mutating(keyPath: \.pageRatio, value: ratio)
     }
+    
+    /// Sets whether the page can be controlled by the keyboard
+    ///
+    /// - Parameter value: `true` if  keyboard control is allowed, `false`, otherwise. Defaults to `true`
+    func allowsKeyboardControl(_ allow: Bool) -> Self {
+        mutating(keyPath: \.allowsKeyboardControl, value: allow)
+    }
 
     #if !os(tvOS)
 

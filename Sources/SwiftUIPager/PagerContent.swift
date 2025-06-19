@@ -91,6 +91,9 @@ extension Pager {
 
         /// `true` if  `Pager` can be dragged
         var allowsDragging: Bool = true
+        
+        /// `true` if  `Pager` can be controlled by the keyboard commands
+        var allowsKeyboardControl: Bool = true
 
         /// `true` if  `Pager`interacts with the digital crown
         var allowsDigitalCrownRotation: Bool = true
@@ -147,6 +150,8 @@ extension Pager {
         var onDigitalCrownRotated: ((Double) -> Void)?
 
         /*** State and Binding properties ***/
+        
+        @Environment(\.layoutDirection) var layoutDirection
 
         /// Page index
         @ObservedObject var pagerModel: Page
@@ -210,7 +215,7 @@ extension Pager {
             #endif
           
             #if os(macOS)
-            wrappedView = wrappedView
+            wrappedView = !allowsKeyboardControl ? wrappedView : wrappedView
               .focusable()
               .onMoveCommand(perform: self.onMoveCommandSent)
               .eraseToAny()
@@ -358,7 +363,9 @@ extension Pager.PagerContent {
                 self.pagerModel.draggingVelocity = Double(offsetIncrement) / timeIncrement
             }
 
-            var newOffset = self.draggingOffset + offsetIncrement * (Locale.current.isRightToLeft ? -1 : 1)
+            let isRightToLeft = layoutDirection.isRightToLeft && isHorizontal
+
+            var newOffset = self.draggingOffset + offsetIncrement * (isRightToLeft ? -1 : 1)
             if !allowsMultiplePagination {
                 newOffset = self.direction == .forward ? max(newOffset, self.pageRatio * -self.pageDistance) : min(newOffset, self.pageRatio * self.pageDistance)
             }
@@ -395,14 +402,10 @@ extension Pager.PagerContent {
         }
         withAnimation(animation) {
             self.pagerModel.draggingOffset = 0
-            if pageIncrement != 0 {
-                self.pagerModel.pageIncrement = pageIncrement
-            }
-            if page != newPage {
-                self.pagerModel.index = newPage
-            }
+            self.pagerModel.pageIncrement = pageIncrement
             self.pagerModel.draggingVelocity = 0
             self.pagerModel.lastDraggingValue = nil
+            self.pagerModel.index = newPage
             self.pagerModel.lastDigitalCrownPageOffset = CGFloat(pagerModel.index)
             self.pagerModel.objectWillChange.send()
             #if os(watchOS)
@@ -420,8 +423,9 @@ extension Pager.PagerContent {
     }
 
     var dragResult: (page: Int, increment: Int) {
+        let isRightToLeft = layoutDirection.isRightToLeft && isHorizontal
         let currentPage = self.currentPage(sensitivity: sensitivity.value)
-        let velocity = -self.draggingVelocity * (Locale.current.isRightToLeft ? -1 : 1)
+        let velocity = -self.draggingVelocity * (isRightToLeft ? -1 : 1)
 
         guard allowsMultiplePagination else {
             var newPage = currentPage

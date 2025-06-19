@@ -110,6 +110,9 @@ public struct Pager<Element, ID, PageView>: View  where PageView: View, Element:
 
     /// `true` if  `Pager` can be dragged
     var allowsDragging: Bool = true
+    
+    /// `true` if  `Pager` can be controlled by the keyboard commands
+    var allowsKeyboardControl: Bool = true
 
     /// `true` if  `Pager`interacts with the digital crown
     var allowsDigitalCrownRotation: Bool = true
@@ -215,6 +218,7 @@ public struct Pager<Element, ID, PageView>: View  where PageView: View, Element:
                 .padding(sideInsets)
                 .pagingAnimation(pagingAnimation)
                 .partialPagination(pageRatio)
+                .allowsKeyboardControl(allowsKeyboardControl)
 
         #if !os(tvOS)
           pagerContent = pagerContent

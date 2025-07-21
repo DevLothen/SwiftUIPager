@@ -385,11 +385,11 @@ extension Pager: Buildable {
         mutating(keyPath: \.allowsKeyboardControl, value: value)
     }
     
-    public func disableFocusRing(_ value: Bool = false) -> Self {
+    public func disableFocusRing(_ value: Bool = true) -> Self {
         mutating(keyPath: \.disableFocusRing, value: value)
     }
     
-    public func pageClipped(_ value: Bool = false) -> Self {
+    public func pageClipped(_ value: Bool = true) -> Self {
         mutating(keyPath: \.pageClipped, value: value)
     }
 

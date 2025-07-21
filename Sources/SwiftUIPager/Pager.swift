@@ -118,7 +118,7 @@ public struct Pager<Element, ID, PageView>: View  where PageView: View, Element:
     var disableFocusRing: Bool = false
     
     /// `true` if  `Pager` clipped
-    var pageClipped: Bool = false
+    var pageClipped: Bool = true
 
     /// `true` if  `Pager`interacts with the digital crown
     var allowsDigitalCrownRotation: Bool = true

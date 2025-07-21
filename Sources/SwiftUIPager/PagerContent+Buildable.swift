@@ -76,6 +76,10 @@ extension Pager.PagerContent: Buildable {
     func allowsKeyboardControl(_ allow: Bool) -> Self {
         mutating(keyPath: \.allowsKeyboardControl, value: allow)
     }
+    
+    func disableFocusRing(_ disabled: Bool) -> Self {
+        mutating(keyPath: \.disableFocusRing, value: disabled)
+    }
 
     #if !os(tvOS)
 

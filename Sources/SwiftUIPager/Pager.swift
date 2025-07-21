@@ -113,6 +113,12 @@ public struct Pager<Element, ID, PageView>: View  where PageView: View, Element:
     
     /// `true` if  `Pager` can be controlled by the keyboard commands
     var allowsKeyboardControl: Bool = true
+    
+    /// `true` if  `Pager` disable focus ring
+    var disableFocusRing: Bool = false
+    
+    /// `true` if  `Pager` clipped
+    var pageClipped: Bool = false
 
     /// `true` if  `Pager`interacts with the digital crown
     var allowsDigitalCrownRotation: Bool = true
@@ -193,7 +199,7 @@ public struct Pager<Element, ID, PageView>: View  where PageView: View, Element:
         GeometryReader { proxy in
             self.content(for: proxy.size)
         }
-        .clipped()
+        .pageClipped(pageClipped)
     }
 
     func content(for size: CGSize) -> PagerContent {
@@ -219,6 +225,7 @@ public struct Pager<Element, ID, PageView>: View  where PageView: View, Element:
                 .pagingAnimation(pagingAnimation)
                 .partialPagination(pageRatio)
                 .allowsKeyboardControl(allowsKeyboardControl)
+                .disableFocusRing(disableFocusRing)
 
         #if !os(tvOS)
           pagerContent = pagerContent
@@ -269,4 +276,22 @@ extension Pager where ID == Element.ID, Element : Identifiable {
         self.init(page: page, data: Array(data), id: \Element.id, content: content)
     }
 
+}
+
+struct ConditionalClippedModifier: ViewModifier {
+    let isEnabled: Bool
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content.clipped()
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func pageClipped(_ isEnabled: Bool) -> some View {
+        self.modifier(ConditionalClippedModifier(isEnabled: isEnabled))
+    }
 }

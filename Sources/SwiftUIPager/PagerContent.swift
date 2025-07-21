@@ -94,6 +94,9 @@ extension Pager {
         
         /// `true` if  `Pager` can be controlled by the keyboard commands
         var allowsKeyboardControl: Bool = true
+        
+        /// `true` if  `Pager` disable focus ring
+        var disableFocusRing: Bool = false
 
         /// `true` if  `Pager`interacts with the digital crown
         var allowsDigitalCrownRotation: Bool = true
@@ -217,6 +220,7 @@ extension Pager {
             #if os(macOS)
             wrappedView = !allowsKeyboardControl ? wrappedView : wrappedView
               .focusable()
+              .disableFocusRing(disableFocusRing)
               .onMoveCommand(perform: self.onMoveCommandSent)
               .eraseToAny()
             #endif
@@ -492,3 +496,16 @@ extension Pager.PagerContent {
     #endif
 
 }
+
+#if os(macOS)
+extension View {
+    @ViewBuilder
+    func disableFocusRing(_ disabled: Bool = true) -> some View {
+        if #available(macOS 14.0, *) {
+            self.focusEffectDisabled(disabled)
+        } else {
+            self
+        }
+    }
+}
+#endif
